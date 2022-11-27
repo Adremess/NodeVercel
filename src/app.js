@@ -7,7 +7,7 @@ const app = express();
 // import routes
 const registerRoute = require('./routes/Register');
 const passwordRoute = require('./routes/Password');
-const cvRoute = require('./routes/Cv');
+// const cvRoute = require('./routes/Cv');
 const skillRoute = require('./routes/Skill');
 const Login = require('./routes/Login');
 
@@ -24,7 +24,7 @@ app.use(cors());
 // routes
 app.use('/api', registerRoute);
 app.use('/api', passwordRoute);
-app.use('/api', cvRoute);
+// app.use('/api', cvRoute);
 app.use('/api', skillRoute);
 app.use('/api', Login);
 
