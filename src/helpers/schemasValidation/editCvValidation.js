@@ -1,36 +1,6 @@
 const { checkSchema } = require('express-validator')
 
-const createCVValidation = checkSchema({
-    fullName: {
-        exists: { options: { checkFalsy: true } },
-        bail: true,
-        isString: true,
-        errorMessage: 'Nombre inválido'
-    },
-    phone: {
-        exists: { options: { checkFalsy: true } },
-        bail: true,
-        isString: true,
-        errorMessage: 'Teléfono inválido'
-    },
-    email: {
-    exists: { options: { checkFalsy: true } },
-    bail: true,
-    isEmail: true,
-    errorMessage: 'Email inválido'
-  },
-  address: {
-    exists: { options: { checkFalsy: true } },
-    bail: true,
-    isString: true,
-    errorMessage: 'Dirección inválida'
-  },
-  aboutMe: {
-    exists: { options: { checkFalsy: true } },
-    bail: true,
-    isString: true,
-    errorMessage: 'Perfil inválido'
-  },
+const editCVValidation = checkSchema({
   experiences: {
     custom: {
         options: (value, {req, location, path}) => {
@@ -43,8 +13,15 @@ const createCVValidation = checkSchema({
             }
 
             for (const experience of value) {
-                if(!experience.name || !experience.role || !experience.description || !experience.startYear || !experience.endYear) {
-                    return false
+                if(!experience.id){
+                    return false;
+                }
+
+
+                if(experience.name || experience.role || experience.description || experience.startYear || experience.endYear) {
+                    return true;
+                } else {
+                    return false;
                 }
             }
 
@@ -67,8 +44,8 @@ const createCVValidation = checkSchema({
             }
 
             for (const skill of value) {
-                if(!skill.name) {
-                    return false
+                if(!skill.id && !skill.nameToEdit && skill.nameForEdit){
+                    return false;
                 }
             }
 
@@ -77,7 +54,7 @@ const createCVValidation = checkSchema({
         }
     },
     
-    errorMessage: "Hablididad inválida"
+    errorMessage: "Habilidad inválida"
   },
   educations: {
     custom: {
@@ -90,8 +67,14 @@ const createCVValidation = checkSchema({
                 return false;
             }
 
+
             for (const education of value) {
-                if(!education.title || !education.school || !education.description || !education.startYear || !education.endYear) {
+                if(!education.id){
+                    return false;
+                }
+                if(education.title || education.school || education.description || education.startYear || education.endYear) {
+                    return true
+                } else {
                     return false
                 }
             }
@@ -104,10 +87,21 @@ const createCVValidation = checkSchema({
     errorMessage: "Educación inválida"
   },
   role:{
-        exists: { options: { checkFalsy: true } },
-        bail: true,
-        isString: true,
-        errorMessage: 'Rol inválido'
+    custom: {
+        options: (value, {req, location, path}) => {
+            if(!value){
+                return true
+            }
+
+            if(!value.id && !value.nameToEdit && !value.nameForEdit ){
+                return false;
+            }
+
+            return true
+            
+        }
+    },
+    errorMessage: "Rol inválido"
     },
   languages: {
     custom: {
@@ -121,11 +115,13 @@ const createCVValidation = checkSchema({
             }
 
             for (const language of value) {
-                if(!language.language) {
-                    return false
-                }
-                if(language.skill !== "basico" && language.skill !== "intermedio" && language.skill !== "avanzado"){
-                    return false
+               if(!language.id){
+                return false;
+               }
+                if(language.skill){
+                    if(language.skill !== "basico" && language.skill !== "intermedio" && language.skill !== "avanzado"){
+                        return false
+                    }
                 }
             }
 
@@ -139,4 +135,4 @@ const createCVValidation = checkSchema({
   
 });
 
-module.exports = createCVValidation
+module.exports = editCVValidation
